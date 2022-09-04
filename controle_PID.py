@@ -12,10 +12,10 @@ def dhdt(t, h, A, beta, Fi):
     return ((Fi/A) - ((beta/A)*m.sqrt(h)))
 
 #Erro:
-def erro(t, x_d, x):
-    #if(x is None):
-    #    x = x_d
-    #    x_d = t
+def erro(t, x_d, x=None):
+    if(x is None):
+        x = x_d
+        x_d = t
     return (x_d-x)
 
 #Constantes do controlador PI:
@@ -33,7 +33,7 @@ u = 0
 
 #Parâmetros de simulação:
 t = 0
-tf = 5
+tf = 0.5
 step = .01
 
 #Looping:
@@ -50,9 +50,13 @@ h_D = h0
 
 while(t < tf):
     #Controle:
+    #Proporcional:
+    prop = erro(h_D, h)
+    #Integrativo:
     integration, err = quad(erro, t, t+step, args=(h_D, h))
+    #Derivativo
     derivation = derivative(erro, h, dx=1e-6, args=(h_D, h))
-    u = ((Kp*erro(None, h_D, h)) + (Ki*integration) + (kd*derivation))
+    u = ((Kp*prop) + (Ki*integration) + (kd*derivation))
     if(u < 0):
         u = 0
     u_axis.append(u)
@@ -69,7 +73,7 @@ while(t < tf):
 #Plotagem do gráfico:
 plt.figure(1)
 plt.subplot(2,1,1)
-plt.ylim([0.74, 0.76])
+#plt.ylim([0.74, 0.76])
 plt.plot(t_axis, h_axis, 'k',label='Nível, h(t)')
 plt.ylabel('$h(t)$', fontsize=12)
 plt.xlabel('$t$', fontsize=12)
