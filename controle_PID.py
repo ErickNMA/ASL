@@ -64,7 +64,7 @@ while(t < tf):
     #Solução da EDO:
     sol = solve_ivp(dhdt, t_span=(t, t+step), y0=[h], method='RK23', t_eval=[t, t+step], args=(area, beta, u))
 
-    h = sol.y[0][-1] + np.random.normal(0, 0.002)
+    h = sol.y[0][-1] #+ np.random.normal(0, 0.002)
     h_axis.append(h)
     t += step
     t_axis.append(t)
